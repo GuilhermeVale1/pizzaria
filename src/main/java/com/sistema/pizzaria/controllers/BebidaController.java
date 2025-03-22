@@ -17,21 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sistema.pizzaria.dtos.BebidaRecordDto;
 import com.sistema.pizzaria.models.BebidasModel;
 import com.sistema.pizzaria.repositories.BebidaRepository;
-import com.sistema.pizzaria.repositories.PizzaRepository;
+
 import jakarta.validation.Valid;
 
 @RestController
 
 public class BebidaController {
 
-    private final PizzaRepository pizzaRepository;
+    
 	@Autowired
 	BebidaRepository bebidaRepository;
 
-    BebidaController(PizzaRepository pizzaRepository) {
-        this.pizzaRepository = pizzaRepository;
-    }
-	
+   
 	@PostMapping("/bebidas")
 	public ResponseEntity<BebidasModel> saveBebida(@RequestBody @Valid BebidaRecordDto bebidaDto){
 		var bebidaModel = new BebidasModel();
