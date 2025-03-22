@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class ProductModel implements Serializable {
+public abstract class ProductModel 	extends RepresentationModel<ProductModel> implements Serializable {
 	
 	
 	private static final long serialVersionUID = 1L;

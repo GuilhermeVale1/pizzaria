@@ -1,4 +1,5 @@
 package com.sistema.pizzaria.controllers;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,9 +9,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,7 +42,16 @@ public class PizzaController {
 	
 	@GetMapping("/pizzas")
 	public ResponseEntity<List<PizzaModel>> getAllPizzas(){
-		return ResponseEntity.status(HttpStatus.OK).body(pizzaRepository.findAll());
+		
+		List<PizzaModel> pizzaListModel = pizzaRepository.findAll();
+		
+		if(!pizzaListModel.isEmpty()) {
+			for(PizzaModel pizza : pizzaListModel) {
+				UUID uuid = pizza.getId();
+				pizza.add(linkTo(methodOn(PizzaController.class).getOnePizza(uuid)).withSelfRel());
+			}
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(pizzaListModel);
 	}
 	
 	
@@ -49,12 +61,54 @@ public class PizzaController {
 		Optional<PizzaModel> pizza = pizzaRepository.findById(id);
 		
 		if(pizza.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+			return notFound();
 			
 			
 		}
+		
+		pizza.get().add(linkTo(methodOn(PizzaController.class).getAllPizzas()).withRel("Pizzas List"));
 		return ResponseEntity.status(HttpStatus.OK).body(pizza.get());
 		
+		
+		
+	}
+	
+	@PutMapping("/pizzas/{id}")
+	public ResponseEntity<Object> updatePizza(@PathVariable(value = "id") UUID id  , @RequestBody @Valid PizzaRecordDto pizzaRecordDto){
+		
+		Optional<PizzaModel> pizza = pizzaRepository.findById(id);
+		
+		if(pizza.isEmpty()) {
+			return notFound();
+		}
+		
+		var pizzaGet = pizza.get();
+		
+		BeanUtils.copyProperties(pizzaRecordDto, pizzaGet);
+		
+	
+		
+		return ResponseEntity.status(HttpStatus.OK).body(pizzaRepository.save(pizzaGet));
+	}
+	
+	@DeleteMapping("/pizzas/{id}")
+	public ResponseEntity<Object> deletePizza(@PathVariable(value = "id") UUID id){
+		
+		Optional<PizzaModel> pizza = pizzaRepository.findById(id);
+		
+		if(pizza.isEmpty()) {
+			return notFound();
+		}
+		
+		var pizzaGet = pizza.get();
+		
+		pizzaRepository.delete(pizzaGet);
+		
+		return ResponseEntity.status(HttpStatus.OK).body("Pizza deletada");
+	}
+	
+	public ResponseEntity<Object> notFound(){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
 	}
 	
 }
