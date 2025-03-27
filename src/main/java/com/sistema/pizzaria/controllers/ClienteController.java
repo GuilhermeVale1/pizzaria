@@ -8,9 +8,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,6 +59,43 @@ public class ClienteController {
 		
 	}
 	
+	@PutMapping("/clientes/{id}")
+	
+	public ResponseEntity<Object> update(@PathVariable(value = "id") UUID id, @RequestBody @Valid ClienteRecordDto clientDto){
+		
+		Optional<ClienteModel> cliente = clienteRepository.findById(id);
+		
+		
+		
+		if(cliente.isEmpty()) {
+			return notFound();
+		}
+		
+		var clienteGet = cliente.get();
+		
+		BeanUtils.copyProperties(clientDto, clienteGet);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.save(clienteGet));
+	}
+	
+	
+	@DeleteMapping("/clientes/{id}") 
+	public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID id){
+		
+		Optional<ClienteModel> cliente = clienteRepository.findById(id);
+		if(cliente.isEmpty()) {
+			return notFound();
+		}
+		
+		var clienteGet = cliente.get();
+		
+		clienteRepository.delete(clienteGet);
+		
+		return ResponseEntity.status(HttpStatus.OK).body("Cliente deletado com sucesso");
+		
+		
+		
+	}
 	public ResponseEntity<Object> notFound(){
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
 	}
