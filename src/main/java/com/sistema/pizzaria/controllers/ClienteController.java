@@ -1,5 +1,8 @@
 package com.sistema.pizzaria.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +25,8 @@ import com.sistema.pizzaria.repositories.ClienteRepository;
 
 import jakarta.validation.Valid;
 
+
+
 @RestController
 public class ClienteController {
 	
@@ -43,6 +48,18 @@ public class ClienteController {
 	public ResponseEntity<List<ClienteModel>> getAll(){
 		 List<ClienteModel> clientes = clienteRepository.findAll();
 		 
+		 if(!clientes.isEmpty()) {
+			 for(ClienteModel cliente : clientes) {
+				 UUID id = cliente.getId();
+				 
+				 cliente.add(linkTo(methodOn(ClienteController.class).getOne(id)).withSelfRel());
+				 
+				 
+			 }
+		 }
+		 
+		
+		 
 		 return ResponseEntity.status(HttpStatus.OK).body(clientes);
 	}
 	
@@ -55,7 +72,8 @@ public class ClienteController {
 			return notFound();
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(cliente);
+		cliente.get().add(linkTo(methodOn(ClienteController.class).getAll()).withRel("Client list"));
+		return ResponseEntity.status(HttpStatus.OK).body(cliente.get());
 		
 	}
 	
