@@ -1,13 +1,15 @@
 package com.sistema.pizzaria.models;
 
-import java.security.PublicKey;
 import java.util.Objects;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -20,15 +22,17 @@ public class PedidoModel {
 	private UUID uuid;
 	
 	@ManyToOne
+	@JoinColumn(name = "client_id")
+
 	private ClienteModel clienteModel;
 	
 	
 	
 	
 
-	public PedidoModel(ClienteModel clienteModel) {
+	public PedidoModel(ClienteModel cliente) {
 		
-		this.clienteModel = clienteModel;
+		this.clienteModel = cliente;
 	}
 	
 	public PedidoModel() {

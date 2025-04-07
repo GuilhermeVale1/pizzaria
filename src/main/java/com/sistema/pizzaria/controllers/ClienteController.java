@@ -11,6 +11,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sistema.pizzaria.dtos.ClienteRecordDto;
+import com.sistema.pizzaria.dtos.LoginRecordDto;
+import com.sistema.pizzaria.enums.UserRole;
 import com.sistema.pizzaria.models.ClienteModel;
 import com.sistema.pizzaria.repositories.ClienteRepository;
 
@@ -32,17 +37,38 @@ public class ClienteController {
 	
 	@Autowired
 	ClienteRepository clienteRepository;
-	
+	@Autowired 
+	AuthenticationManager authenticationManager;
 	
 	@PostMapping("/clientes")
-	public ResponseEntity<ClienteModel> saveCliente( @RequestBody @Valid ClienteRecordDto clientDto ){
+	public ResponseEntity<Object> saveCliente( @RequestBody @Valid ClienteRecordDto clientDto ){
 		
-		var clienteModel = new ClienteModel();
-		BeanUtils.copyProperties(clientDto, clienteModel);
+		if(clienteRepository.findByEmail(clientDto.email()) != null ){
+			
+			return notFound();
+			
+		}
+		
+		
+		String encryptedPassword = new BCryptPasswordEncoder().encode(clientDto.password());
+		
+		var clienteModel = new ClienteModel(clientDto.cpf(), clientDto.nome() , clientDto.email(), clientDto.telefone(), encryptedPassword);
+		
+		clienteModel.setRole(UserRole.USER);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(clienteRepository.save(clienteModel));
 		
 	}
+	
+	
+	@PostMapping("/clientes/login")
+	public ResponseEntity<Object> login(@RequestBody @Valid LoginRecordDto loginDto) {
+		var usernamePassword = new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password());
+		var auth = authenticationManager.authenticate(usernamePassword);
+		
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
 	
 	@GetMapping("/clientes")
 	public ResponseEntity<List<ClienteModel>> getAll(){
