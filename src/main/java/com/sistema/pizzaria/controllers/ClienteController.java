@@ -66,7 +66,7 @@ public class ClienteController {
 		var usernamePassword = new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password());
 		var auth = authenticationManager.authenticate(usernamePassword);
 		
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.OK).body("Logado");
 	}
 	
 	
