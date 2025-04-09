@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sistema.pizzaria.dtos.ClienteRecordDto;
 import com.sistema.pizzaria.dtos.LoginRecordDto;
+import com.sistema.pizzaria.dtos.LoginResponseDto;
 import com.sistema.pizzaria.enums.UserRole;
 import com.sistema.pizzaria.models.ClienteModel;
 import com.sistema.pizzaria.repositories.ClienteRepository;
+import com.sistema.pizzaria.services.TokenService;
 
 import jakarta.validation.Valid;
 
@@ -36,9 +38,12 @@ import jakarta.validation.Valid;
 public class ClienteController {
 	
 	@Autowired
-	ClienteRepository clienteRepository;
+	private ClienteRepository clienteRepository;
 	@Autowired 
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private TokenService tokenService;
 	
 	@PostMapping("/clientes")
 	public ResponseEntity<Object> saveCliente( @RequestBody @Valid ClienteRecordDto clientDto ){
@@ -62,11 +67,13 @@ public class ClienteController {
 	
 	
 	@PostMapping("/clientes/login")
-	public ResponseEntity<Object> login(@RequestBody @Valid LoginRecordDto loginDto) {
+	public ResponseEntity login(@RequestBody @Valid LoginRecordDto loginDto) {
 		var usernamePassword = new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password());
 		var auth = authenticationManager.authenticate(usernamePassword);
 		
-		return ResponseEntity.status(HttpStatus.OK).body("Logado");
+		var token = tokenService.generateToken((ClienteModel) auth.getPrincipal());
+		
+		return ResponseEntity.ok(new LoginResponseDto(token));
 	}
 	
 	
