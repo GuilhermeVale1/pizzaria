@@ -32,7 +32,7 @@ public class RecoverAccountService{
 	private ClienteRepository clienteRepository;
 	
 	
-
+	
 
     RecoverAccountService(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
