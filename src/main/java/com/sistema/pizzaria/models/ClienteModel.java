@@ -21,6 +21,12 @@ public class ClienteModel extends PessoaModel  {
 	private List<PedidoModel> pedidos;
 	
 	
+	@OneToMany(mappedBy = "clienteModel")
+	@JsonIgnore
+	private List<EnderecoModel> enderecos;
+	
+	
+	
 	public List<PedidoModel> getPedidos() {
 		return pedidos;
 	}

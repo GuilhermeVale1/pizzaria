@@ -1,16 +1,17 @@
 package com.sistema.pizzaria.models;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -27,7 +28,8 @@ public class PedidoModel {
 	private ClienteModel clienteModel;
 	
 	
-	
+	@OneToMany(mappedBy = "pedidoModel", cascade = CascadeType.ALL , orphanRemoval = true)
+	private List<PedidoProductsModel> produtosPedidoModel;
 	
 
 	public PedidoModel(ClienteModel cliente) {
@@ -58,6 +60,16 @@ public class PedidoModel {
 		PedidoModel other = (PedidoModel) obj;
 		return Objects.equals(uuid, other.uuid);
 	}
+	
+	public List<PedidoProductsModel> getProdutosPedidoModel() {
+	    return produtosPedidoModel;
+	}
+	
+	
+	public void setProdutosPedidoModel(List<PedidoProductsModel> produtosPedidoModel) {
+	    this.produtosPedidoModel = produtosPedidoModel;
+	}
+	
 
 	public UUID getUuid() {
 		return uuid;

@@ -1,6 +1,12 @@
 package com.sistema.pizzaria.models;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -13,6 +19,11 @@ public class BebidasModel extends ProductModel{
 	
 	private Integer volume;
 	private String tipo;
+	
+	
+	@OneToMany(mappedBy = "bebidasModel", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<PedidoProductsModel> pedidosProdutoModel;
 	
 	
 	public BebidasModel(String name, String description, Double price, Integer volume, String tipo) {

@@ -13,6 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sistema.pizzaria.models.ClienteModel;
+import com.sistema.pizzaria.models.FuncionarioModel;
 
 @Service
 public class TokenService {
@@ -43,6 +44,28 @@ public class TokenService {
 		
 		
 	}
+	
+	public String generateToken(FuncionarioModel funcionarioModel) {
+		
+	
+		
+		
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(secret);
+			String token = JWT.create()
+					.withIssuer("auth-api")
+					.withSubject(funcionarioModel.getEmail())
+					.withExpiresAt(getExpirationDate())
+					.sign(algorithm);
+			
+			return token;
+		}catch(JWTCreationException exception) {
+			throw new RuntimeException("Erro generation token" , exception);
+		}
+		
+		
+	}
+	
 	
 	
 	public String validateToken(String token) {
