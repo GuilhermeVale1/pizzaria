@@ -9,6 +9,7 @@ import org.springframework.hateoas.RepresentationModel;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
@@ -20,6 +21,9 @@ public abstract class ProductModel 	extends RepresentationModel<ProductModel> im
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private UUID id;
+	
+	private String image;
+	
 	private String name;
 	private String description;
 	private Double price;

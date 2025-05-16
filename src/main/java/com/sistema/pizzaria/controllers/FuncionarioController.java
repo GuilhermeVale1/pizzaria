@@ -1,5 +1,9 @@
 package com.sistema.pizzaria.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,12 +15,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sistema.pizzaria.dtos.FuncionarioRecordDto;
+import com.sistema.pizzaria.dtos.FuncionarioUpdateRecordDto;
 import com.sistema.pizzaria.enums.UserRole;
 import com.sistema.pizzaria.models.FuncionarioModel;
 import com.sistema.pizzaria.repositories.FuncionarioRepository;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 
 @RestController
 public class FuncionarioController {
@@ -43,12 +52,68 @@ public class FuncionarioController {
 	}
 	
 	@GetMapping("/funcionario")
-	public ResponseEntity<Object> getAll(){
+	public ResponseEntity<List<FuncionarioModel>> getAll(){
+		List<FuncionarioModel> funcionarioModels =  funcionarioRepository.findAll();
 		
-		var clientes = funcionarioRepository.findAll();
 		
-		return ResponseEntity.status(HttpStatus.OK).body(clientes);
+		if(!funcionarioModels.isEmpty()) {
+			for(FuncionarioModel funcionario: funcionarioModels) {
+				UUID id = funcionario.getId();
+				funcionario.add(linkTo(methodOn(FuncionarioController.class).getOneFuncionario(id)).withSelfRel());
+			}
+		}
 		
+		
+		return ResponseEntity.status(HttpStatus.OK).body(funcionarioModels);
+		
+	}
+	
+	@GetMapping("/funcionario/{id}")
+	public ResponseEntity<Object> getOneFuncionario(@PathVariable UUID id){
+		Optional <FuncionarioModel> funcionarioModel = funcionarioRepository.findById(id);
+		
+		if(funcionarioModel.isEmpty()) {
+			return notFound();
+		}
+		
+		funcionarioModel.get().add(linkTo(methodOn(FuncionarioController.class).getAll()).withRel("Funcionario list"));
+		
+		
+		return ResponseEntity.status(HttpStatus.OK).body(funcionarioModel.get());
+		
+		
+	}
+	
+	@PutMapping("funcionario/{id}")
+	public ResponseEntity<Object> putFuncionario(@PathVariable UUID id, @RequestBody FuncionarioUpdateRecordDto funcionarioDto) {
+		
+		
+		var funcionarioModel = funcionarioRepository.findById(id);
+		
+		if(funcionarioModel.isEmpty()) {
+			return notFound();
+		}
+		var func = funcionarioModel.get();
+		
+	    if (funcionarioDto.nome() != null) {
+	        func.setNome(funcionarioDto.nome());
+	    }
+	    if (funcionarioDto.email() != null) {
+	        func.setEmail(funcionarioDto.email());
+	    }
+	    if (funcionarioDto.telefone() != null) {
+	        func.setTelefone(funcionarioDto.telefone());
+	    }
+	    if (funcionarioDto.password() != null) {
+	    	String encryptedPassword = new BCryptPasswordEncoder().encode(funcionarioDto.password());
+	        func.setPassword(encryptedPassword);
+	    }
+	    
+	    funcionarioRepository.save(func);
+	    
+	    return ResponseEntity.ok("Funcionário atualizado com sucesso");
+	    
+	    
 	}
 	
 	@DeleteMapping("/funcionario/{id}")

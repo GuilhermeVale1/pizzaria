@@ -31,8 +31,13 @@ public class EnderecoModel {
 	private String complemento;
 	
 	
-	public EnderecoModel(String cep, String bairro, String rua, String numero, String complemento) {
+	
+
+
+	public EnderecoModel(ClienteModel clienteModel, String cep, String bairro, String rua, String numero,
+			String complemento) {
 		super();
+		this.clienteModel = clienteModel;
 		this.cep = cep;
 		this.bairro = bairro;
 		this.rua = rua;
