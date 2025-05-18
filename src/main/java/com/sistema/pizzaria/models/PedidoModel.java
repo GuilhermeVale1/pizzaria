@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,10 +27,17 @@ public class PedidoModel {
 	
 	@ManyToOne
 	@JoinColumn(name = "client_id")
-
+	@JsonIgnoreProperties("enderecos")
 	private ClienteModel clienteModel;
 	
 	
+	private Boolean atendido;
+	
+	@ManyToOne
+	@JoinColumn(name = "endereco_id")
+	private EnderecoModel enderecoModel;
+	
+
 	@OneToMany(mappedBy = "pedidoModel", cascade = CascadeType.ALL , orphanRemoval = true)
 	private List<PedidoProductsModel> produtosPedidoModel;
 	
@@ -35,6 +45,7 @@ public class PedidoModel {
 	public PedidoModel(ClienteModel cliente) {
 		
 		this.clienteModel = cliente;
+		atendido = false;
 	}
 	
 	public PedidoModel() {
@@ -42,7 +53,22 @@ public class PedidoModel {
 	}
 	
 	
-	
+	public EnderecoModel getEnderecoModel() {
+		return enderecoModel;
+	}
+
+	public void setEnderecoModel(EnderecoModel enderecoModel) {
+		this.enderecoModel = enderecoModel;
+	}
+
+
+	public Boolean getAtendido() {
+		return atendido;
+	}
+
+	public void setAtendido(Boolean atendido) {
+		this.atendido = atendido;
+	}
 
 	@Override
 	public int hashCode() {

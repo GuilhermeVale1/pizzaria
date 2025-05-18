@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,22 +25,25 @@ import com.sistema.pizzaria.dtos.FuncionarioUpdateRecordDto;
 import com.sistema.pizzaria.enums.UserRole;
 import com.sistema.pizzaria.models.FuncionarioModel;
 import com.sistema.pizzaria.repositories.FuncionarioRepository;
+import com.sistema.pizzaria.services.TokenService;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 
 @RestController
 public class FuncionarioController {
-
-    private final AuthenticationManager authenticationManager;
-	
+	@Autowired
+    private AuthenticationManager authenticationManager;
+	@Autowired
 	private FuncionarioRepository funcionarioRepository;
+	@Autowired
+	private TokenService tokenService;
+	
 
-    FuncionarioController(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
+ 
 
 	@PostMapping("/funcionario")
-	public ResponseEntity<Object> saveFuncionario(FuncionarioRecordDto funcionarioDto){
+	public ResponseEntity<Object> saveFuncionario(@RequestBody FuncionarioRecordDto funcionarioDto){
 		
 		if(funcionarioRepository.findByEmail(funcionarioDto.email()) != null) {
 			return notFound();

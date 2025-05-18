@@ -2,6 +2,10 @@ package com.sistema.pizzaria.models;
 
 import java.util.UUID;
 
+import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +17,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_enderecos")
 
-public class EnderecoModel {
+public class EnderecoModel extends RepresentationModel<EnderecoModel> {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,6 +25,7 @@ public class EnderecoModel {
 	
 	@ManyToOne
 	@JoinColumn(name = "client_id")
+	@JsonIgnoreProperties("enderecos")
 	private ClienteModel clienteModel;
 
 	
@@ -29,9 +34,20 @@ public class EnderecoModel {
 	private String rua;
 	private String numero;
 	private String complemento;
+	private Boolean principal = false;
 	
 	
 	
+
+
+	public Boolean getPrincipal() {
+		return principal;
+	}
+
+
+	public void setPrincipal(Boolean principal) {
+		this.principal = principal;
+	}
 
 
 	public EnderecoModel(ClienteModel clienteModel, String cep, String bairro, String rua, String numero,
@@ -43,6 +59,7 @@ public class EnderecoModel {
 		this.rua = rua;
 		this.numero = numero;
 		this.complemento = complemento;
+		
 	}
 
 

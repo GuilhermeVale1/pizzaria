@@ -66,15 +66,7 @@ public class ClienteController {
 	}
 	
 	
-	@PostMapping("/clientes/login")
-	public ResponseEntity login(@RequestBody @Valid LoginRecordDto loginDto) {
-		var usernamePassword = new UsernamePasswordAuthenticationToken(loginDto.email(), loginDto.password());
-		var auth = authenticationManager.authenticate(usernamePassword);
-		
-		var token = tokenService.generateToken((ClienteModel) auth.getPrincipal());
-		
-		return ResponseEntity.ok(new LoginResponseDto(token));
-	}
+
 	
 	
 	@GetMapping("/clientes")

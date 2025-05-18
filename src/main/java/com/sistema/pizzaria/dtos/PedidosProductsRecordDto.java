@@ -2,8 +2,8 @@ package com.sistema.pizzaria.dtos;
 
 import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record PedidosProductsRecordDto(@NotBlank UUID idPedido, UUID idPizza, UUID idBebida  ) {
+public record PedidosProductsRecordDto(@NotNull UUID idPedido, UUID idPizza, UUID idBebida  ) {
 
 }
