@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.sistema.pizzaria.dtos.EnderecoRecordDto;
 import com.sistema.pizzaria.dtos.PedidoResponseDto;
@@ -95,7 +98,14 @@ public class PedidoController {
 	@GetMapping("/pedidos")
 	public ResponseEntity<List<PedidoModel>> getAll() {
 
-		List<PedidoModel> pedidos = pedidoRepository.findAll();
+		List<PedidoModel> pedidos = pedidoRepository.findByAtendido(false);
+		
+		if(!pedidos.isEmpty()) {
+			for(PedidoModel pedidoModel : pedidos) {
+				UUID id = pedidoModel.getUuid();
+				pedidoModel.add(linkTo(methodOn(PedidoController.class).getOne(id)).withSelfRel());
+			}
+		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(pedidos);
 
@@ -108,6 +118,10 @@ public class PedidoController {
 		if (pedido.isEmpty()) {
 			return notFound();
 		}
+		var pedidoReal = pedido.get();
+		
+		pedidoReal.add(linkTo(methodOn(PedidoController.class).getAll()).withRel("Pedidos list"));
+		
 
 		return ResponseEntity.status(HttpStatus.OK).body(pedido);
 

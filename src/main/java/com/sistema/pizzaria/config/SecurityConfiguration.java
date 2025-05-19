@@ -37,9 +37,10 @@ public class SecurityConfiguration {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.POST, "/clientes", "/login" , "/forgot-password", "/funcionario" ).permitAll()
+                .requestMatchers(HttpMethod.GET, "/imagens/**").permitAll()
                 .requestMatchers(HttpMethod.POST,  "/endereco", "/pedidos", "/products" ).hasRole("USER" )
                 .requestMatchers(HttpMethod.PUT, "/reset-password").permitAll()
-                .requestMatchers(HttpMethod.GET, "/clientes").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/clientes" ,  "/pedidos" ,  "/pedidos/{id}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/pizzas" , "pizzas/{id}" , "/bebidas", "/bebidas{id}").hasRole("USER")
                 .requestMatchers(HttpMethod.DELETE, "/clientes/{id}").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/clientes/{id}").hasRole("USER")

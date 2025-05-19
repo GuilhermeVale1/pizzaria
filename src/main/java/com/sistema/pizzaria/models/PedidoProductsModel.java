@@ -1,7 +1,8 @@
 package com.sistema.pizzaria.models;
 
-import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ public class PedidoProductsModel {
 	
 	@ManyToOne
 	@JoinColumn(name = "pedido_id" )
+	@JsonIgnoreProperties("produtosPedidoModel")
 	private PedidoModel pedidoModel;
 	
 	@ManyToOne

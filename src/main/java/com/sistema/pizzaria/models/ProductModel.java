@@ -35,9 +35,23 @@ public abstract class ProductModel 	extends RepresentationModel<ProductModel> im
 		this.price = price;
 	}
 	
+	
 	public ProductModel() {
 		super();
 	}
+	
+	
+	
+
+	public String getImage() {
+		return image;
+	}
+
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 
 	public UUID getId() {
 		return id;

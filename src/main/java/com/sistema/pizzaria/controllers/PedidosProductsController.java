@@ -45,33 +45,39 @@ public class PedidosProductsController {
 
 	@PostMapping("/products")
 	public ResponseEntity<Object> create(@RequestBody @Valid PedidosProductsRecordDto pedidosDto) {
-		var pedidoOpt = pedidoRepository.findById(pedidosDto.idPedido());
-		if (pedidoOpt.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido não encontrado.");
-		}
+		 var pedidoOpt = pedidoRepository.findById(pedidosDto.idPedido());
+		    if (pedidoOpt.isEmpty()) {
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido não encontrado.");
+		    }
 
-		
-		Optional<PizzaModel> pizzaOpt = Optional.empty();
-		if (pedidosDto.idPizza() != null) {
-			pizzaOpt = pizzaRepository.findById(pedidosDto.idPizza());
-		}
+		    Optional<PizzaModel> pizzaOpt = Optional.empty();
+		    if (pedidosDto.idPizza() != null) {
+		        pizzaOpt = pizzaRepository.findById(pedidosDto.idPizza());
+		    }
 
-		
-		Optional<BebidasModel> bebidaOpt = Optional.empty();
-		if (pedidosDto.idBebida() != null) {
-			bebidaOpt = bebidaRepository.findById(pedidosDto.idBebida());
-		}
+		    Optional<BebidasModel> bebidaOpt = Optional.empty();
+		    if (pedidosDto.idBebida() != null) {
+		        bebidaOpt = bebidaRepository.findById(pedidosDto.idBebida());
+		    }
 
-		
-		if (pizzaOpt.isPresent() || bebidaOpt.isPresent()) {
-			var pedidoProductsModel = new PedidoProductsModel();
-			BeanUtils.copyProperties(pedidosDto, pedidoProductsModel);
-			pedidosProductsRepository.save(pedidoProductsModel);
+		    if (pizzaOpt.isPresent() || bebidaOpt.isPresent()) {
+		        var pedidoProductsModel = new PedidoProductsModel();
 
-			return ResponseEntity.status(HttpStatus.CREATED).body("Pedido feito com sucesso.");
-		}
+		       
+		        pedidoProductsModel.setPedidoModel(pedidoOpt.get());
 
-		return ResponseEntity.badRequest().body("Nenhum produto válido foi informado.");
+		        
+		        pizzaOpt.ifPresent(pedidoProductsModel::setPizzaModel);
+
+		      
+		        bebidaOpt.ifPresent(pedidoProductsModel::setBebidasModel);
+
+		        pedidosProductsRepository.save(pedidoProductsModel);
+
+		        return ResponseEntity.status(HttpStatus.CREATED).body("Pedido feito com sucesso.");
+		    }
+
+		    return ResponseEntity.badRequest().body("Nenhum produto válido foi informado.");
 
 	}
 	
