@@ -28,3 +28,6 @@ src/
                 ├── services/         
                 ├── security/        
                 └── config/           
+
+
+![image](https://github.com/user-attachments/assets/64ed3e8a-0e15-4f73-b05b-5f52cb7388a2)
