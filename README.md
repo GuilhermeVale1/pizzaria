@@ -9,7 +9,7 @@ API REST desenvolvida com **Spring Boot** para gerenciar o backend de uma pizzar
 - MySQL
 - IDE (IntelliJ, VSCode ou Eclipse)
 
-###Arquitetura software
+### Arquitetura software
 ![image](https://github.com/user-attachments/assets/69a69fbe-501f-4d50-8ab8-9245831edb33)
 
 
