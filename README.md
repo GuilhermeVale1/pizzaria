@@ -9,6 +9,10 @@ API REST desenvolvida com **Spring Boot** para gerenciar o backend de uma pizzar
 - MySQL
 - IDE (IntelliJ, VSCode ou Eclipse)
 
+#Arquitetura software
+![image](https://github.com/user-attachments/assets/69a69fbe-501f-4d50-8ab8-9245831edb33)
+
+
 
 ### Estrutura de pastas
 
@@ -30,4 +34,15 @@ src/
                 └── config/           
 
 
-![image](https://github.com/user-attachments/assets/64ed3e8a-0e15-4f73-b05b-5f52cb7388a2)
+
+
+
+
+
+
+
+
+
+
+
+
